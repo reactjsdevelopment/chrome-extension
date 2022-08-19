@@ -1,6 +1,10 @@
     // "build": "react-scripts build",
         "build": "INLINE_RUNTIME_CHUNK=false react-scripts build",
             "build": "set INLINE_RUNTIME_CHUNK=false&&react-scripts build",
+    "build": "set INLINE_RUNTIME_CHUNK=false&&craco build",
+
+either use this INLINE_RUNTIME_CHUNK or 
+ "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'" 
     chrome://extensions/
 
 icons

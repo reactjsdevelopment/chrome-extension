@@ -1,8 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { DOMMessage, DOMMessageResponse } from './types';
 
 function App() {
+  console.log('tabs');
+
+  const [title, setTitle] = useState('');
+  const [headlines, setHeadlines] = useState<string[]>([]);
+
+  React.useEffect(() => {
+    /**
+     * We can't use "chrome.runtime.sendMessage" for sending messages from React.
+     * For sending messages from React we need to specify which tab to send it to.
+     */
+    chrome.tabs && chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    }, tabs => {
+      console.log(tabs,'tabs');
+      
+      /**
+       * Sends a single message to the content script(s) in the specified tab,
+       * with an optional callback to run when a response is sent back.
+       *
+       * The runtime.onMessage event is fired in each content script running
+       * in the specified tab for the current extension.
+       */
+      chrome.tabs.sendMessage(
+           // Current tab ID
+
+        tabs[0].id || 0,
+           // Message type
+
+        { type: 'GET_DOM' } as DOMMessage,
+           // Callback executed when the content script sends a response
+
+        (response: DOMMessageResponse) => {
+          setTitle(response.title);
+          setHeadlines(response.headlines);
+        });
+    });
+  });
+
   return (
     <div className="App">
       <h1>SEO Extension built with React!</h1>
@@ -11,24 +50,26 @@ function App() {
         <li className="SEOValidation">
           <div className="SEOValidationField">
             <span className="SEOValidationFieldTitle">Title</span>
-            <span className="SEOValidationFieldStatus Error">
-              90 Characters
+            <span className={`SEOValidationFieldStatus ${title.length < 30 || title.length > 65 ? 'Error' : 'Ok'}`}>
+              {title.length} Characters
             </span>
           </div>
           <div className="SEOVAlidationFieldValue">
-            The title of the page
+            {title}
           </div>
         </li>
 
         <li className="SEOValidation">
           <div className="SEOValidationField">
             <span className="SEOValidationFieldTitle">Main Heading</span>
-            <span className="SEOValidationFieldStatus Ok">
-              1
+            <span className={`SEOValidationFieldStatus ${headlines.length !== 1 ? 'Error' : 'Ok'}`}>
+              {headlines.length}
             </span>
           </div>
           <div className="SEOVAlidationFieldValue">
-            The main headline of the page (H1)
+            <ul>
+              {headlines.map((headline, index) => (<li key={index}>{headline}</li>))}
+            </ul>
           </div>
         </li>
       </ul>
