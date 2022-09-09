@@ -34,4 +34,4 @@ icons
   npm install @types/chrome --save-dev
 npm install @craco/craco --save --legacy-peer-deps
 
-
+https://github.com/nemrosim/chrome-react-extension-example
