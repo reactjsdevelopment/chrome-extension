@@ -1,7 +1,6 @@
 module.exports = {
   webpack: {
     configure: (webpackConfig, {env, paths}) => {
-      console.log(env,paths, 'paths');
       return {
         ...webpackConfig,
         entry: {
